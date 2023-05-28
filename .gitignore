@@ -6,6 +6,9 @@
 # Output Builds
 /Builds
 
+/Library
+/Logs
+
 # Training environments
 /envs
 
