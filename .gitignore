@@ -6,8 +6,8 @@
 # Output Builds
 /Builds
 
-/Library
-/Logs
+/AUV/Library
+/AUV/Logs
 
 # Training environments
 /envs
