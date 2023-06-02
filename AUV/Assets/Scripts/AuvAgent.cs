@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Mathematics;
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Sensors;
@@ -61,7 +62,10 @@ public class Sensor
             distance = maxDistance;
         }
         this.hit = tmpHit;
-        
+
+        if (hitName == "Target")
+            return maxDistance;
+
         return distance;
     }
 
@@ -81,12 +85,15 @@ public class Sensor
 
 public class AuvAgent : Agent
 {
+    private int episodeCounter = 0;
+    private Dictionary<int, List<Vector3>> episodePaths;
+    private Dictionary<int, float> episodeLenght;
     private List<Sensor> sensorList;
     private float lastSpeed;
     private float lastAngle;
+    private LineRenderer lineRenderer;
 
     public Transform Target;
-    public Transform Obstacle1;
     public float maxSensordistance = 150;
     public float speed = 0;
     public float angle = 0;
@@ -94,12 +101,15 @@ public class AuvAgent : Agent
     public int Multiplier = 1;
     public float alpha = 2.25f;
     public float safeDistance = 30f;
+    public float Rsucceed = 2000;
     public float R1 = 200;
     public float R2 = 200;
     public float t1 = 0.5f, t2 = 0.5f, t3 = 0.5f;
     // Start is called before the first frame update
     void Start()
     {
+        episodePaths = new Dictionary<int, List<Vector3>>();
+        episodeLenght = new Dictionary<int, float>();
         sensorList = new List<Sensor>()
         {
             new Sensor(this.transform, maxSensordistance, "right"),
@@ -114,33 +124,56 @@ public class AuvAgent : Agent
 
     public override void OnEpisodeBegin()
     {
-        Target.transform.position = new Vector3(-50, 0, 400);
-        transform.position = new Vector3(-25, 1, -485);
+        transform.position = new Vector3(421, 0, -34);
         transform.rotation = Quaternion.Euler(0, 0, 0);
-
+        lineRenderer = GetComponentInChildren<LineRenderer>();
+        episodeCounter++;
+        episodePaths.Add(episodeCounter, new List<Vector3>());
+        episodeLenght.Add(episodeCounter, 0f);
     }
 
     public override void CollectObservations(VectorSensor sensor)
     {
-        var distances = sensorList.Select(s => s.CalcDistance()).ToList();
-        sensor.AddObservation(distances);
+        //List<float> distances = new List<float>();
+        //foreach (var s in sensorList)
+        //{
+        //    float calculatedDistance = s.CalcDistance();
+        //    if (s.hitName == "Target")
+        //        calculatedDistance = maxSensordistance;
+        //    distances.Add(calculatedDistance);
+        //}
+
+        //sensor.AddObservation(distances);
+
+        sensor.AddObservation(sensorList.Select(s => s.CalcDistance()).ToArray());
     }
 
     public override void OnActionReceived(ActionBuffers actions)
     {
+        var currentPosition = transform.position;
+        episodePaths[episodeCounter].Add(transform.position);
 
-        speed = Multiplier * actions.ContinuousActions[0];
-        angle = Multiplier * actions.ContinuousActions[1];
+        speed = actions.ContinuousActions[0];
+        angle = actions.ContinuousActions[1];
 
+        speed = (speed + 1f) / 2f * 2.5f - 1f;
+
+        speed *= Multiplier;
+
+        angle *= (180 / math.PI) / 5;
         if (speed < 0)
             angle *= -1;
 
         transform.Rotate(transform.up, angle);
         transform.position += speed * transform.forward;
+        var targetPosition = transform.position;
+
+        episodeLenght[episodeCounter] += Vector3.Distance(targetPosition, currentPosition);
+
+        #region Rewards
 
         float r1 = -0.001f * Vector3.Distance(transform.position, Target.position);
-        float r3 = -0.01f * (Mathf.Abs(speed - lastSpeed) * Mathf.Abs(lastAngle - angle));
-
+        float r3 = -0.01f * (Mathf.Abs(speed - lastSpeed) + Mathf.Abs(lastAngle - angle));
 
         float r2 = 0;
         float r21 = 0;
@@ -148,14 +181,18 @@ public class AuvAgent : Agent
             .Select(s => new { s.distance, s.hitName }).First();
         if (minSensorDist.distance <= 1.0f * safeDistance && minSensorDist.hitName != "Target")
         {
-            r21 = -R2;
-            //SetReward(r21);
-            //EndEpisode();
-            //return;
+            r21 = -(MaxStep + 100);
+            SetReward(r21);
+            EndEpisode();
         }
         else if (minSensorDist.distance <= 2.0 * safeDistance && minSensorDist.hitName != "Target")
         {
             r21 = -0.01f * Mathf.Pow((minSensorDist.distance - safeDistance), 2);
+        }
+        else if (StepCount == MaxStep - 1)
+        {
+            SetReward(GetCumulativeReward());
+            EndEpisode();
         }
         r2 = r21;
 
@@ -177,11 +214,18 @@ public class AuvAgent : Agent
         //}
 
         float reward = t1 * r1 + t2 * r2 + t3 * r3;
-
-        Debug.LogFormat("{0}\t{1}\t{2}\t{3}\t{4}", r1, r2, r3, reward, minSensorDist.hitName);
-
+        //float reward = t1 * r1 + t2 * r2;
         SetReward(reward);
-        sensorList.ForEach(s => s.DrawLine());
+        #endregion
+
+        string debugMessage = $"Rewards:\t{r1}\t{r2}\t{r3}\t{reward}\t{minSensorDist.hitName}\n\r" +
+            $"\tEpisode {episodeCounter}\tTotal Distance: {episodeLenght[episodeCounter]}";
+
+        Debug.Log(debugMessage);
+        //sensorList.ForEach(s => s.DrawLine());
+
+        lineRenderer.positionCount = episodePaths[episodeCounter].Count;
+        lineRenderer.SetPositions(episodePaths[episodeCounter].ToArray());
 
         lastSpeed = speed;
         lastAngle = angle;
@@ -191,7 +235,7 @@ public class AuvAgent : Agent
     {
         if (other.gameObject.name == Target.name)
         {
-            SetReward(R2);
+            SetReward(Rsucceed);
             EndEpisode();
         }
         else
