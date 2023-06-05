@@ -7,6 +7,7 @@ using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Sensors;
 using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEngine.UI.GridLayoutGroup;
 
 public class Sensor
 {
@@ -64,7 +65,7 @@ public class Sensor
         this.hit = tmpHit;
 
         if (hitName == "Target")
-            return maxDistance;
+            distance = maxDistance;
 
         return distance;
     }
@@ -92,6 +93,7 @@ public class AuvAgent : Agent
     private float lastSpeed;
     private float lastAngle;
     private LineRenderer lineRenderer;
+    private Vector3 startPosition;
 
     public Transform Target;
     public float maxSensordistance = 150;
@@ -120,11 +122,13 @@ public class AuvAgent : Agent
             new Sensor(this.transform, maxSensordistance, "rightInverse", 60),
             new Sensor(this.transform, maxSensordistance, "rightInverse"),
         };
+        startPosition = transform.position;
     }
 
     public override void OnEpisodeBegin()
     {
-        transform.position = new Vector3(421, 0, -34);
+        transform.position = startPosition;
+        //transform.position = new Vector3(421, 0, -34);
         transform.rotation = Quaternion.Euler(0, 0, 0);
         lineRenderer = GetComponentInChildren<LineRenderer>();
         episodeCounter++;
@@ -222,7 +226,7 @@ public class AuvAgent : Agent
             $"\tEpisode {episodeCounter}\tTotal Distance: {episodeLenght[episodeCounter]}";
 
         Debug.Log(debugMessage);
-        //sensorList.ForEach(s => s.DrawLine());
+        sensorList.ForEach(s => s.DrawLine());
 
         lineRenderer.positionCount = episodePaths[episodeCounter].Count;
         lineRenderer.SetPositions(episodePaths[episodeCounter].ToArray());

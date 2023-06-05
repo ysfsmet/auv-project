@@ -54,17 +54,17 @@ MonoBehaviour:
   MaxStep: 0
   Target: {fileID: 0}
   maxSensordistance: 150
-  speed: 1
+  speed: 0
   angle: 0
-  Multiplier: 10
+  Multiplier: 1
   alpha: 2.25
-  safeDistance: 1
-  Rsucceed: 2000
+  safeDistance: 5
+  Rsucceed: 5000
   R1: 200
-  R2: 200
-  t1: 0.5
+  R2: 3000
+  t1: 1
   t2: 0.5
-  t3: 0.5
+  t3: 0.2
 --- !u!114 &8140725103766103054
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -78,7 +78,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 5
+    VectorObservationSize: 7
     NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 2
@@ -88,7 +88,7 @@ MonoBehaviour:
     VectorActionSpaceType: 1
     hasUpgradedBrainParametersWithActionSpec: 1
   m_Model: {fileID: 5022602860645237092, guid: f72a1fb0471ad57409db13f1f57513e4, type: 3}
-  m_InferenceDevice: 0
+  m_InferenceDevice: 1
   m_BehaviorType: 0
   m_BehaviorName: Auv
   TeamId: 0
@@ -153,7 +153,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8545788687236311482}
-  m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
+  m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -219,7 +219,7 @@ CapsuleCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8545788687236311482}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   m_Radius: 0.5
   m_Height: 2
@@ -267,17 +267,17 @@ LineRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Positions:
-  - {x: 0, y: -0.000000014901161, z: 0.0052680955}
-  - {x: -0.0016495585, y: 0.010071158, z: -2.3705182}
+  - {x: 0, y: -0.000000014901161, z: -3.6240866}
+  - {x: -0.04718578, y: 0.010071158, z: -1.0557413}
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 1
+    widthMultiplier: 5.601188
     widthCurve:
       serializedVersion: 2
       m_Curve:
       - serializedVersion: 3
-        time: 0
-        value: 1
+        time: 0.21505436
+        value: 0.23333192
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -285,13 +285,13 @@ LineRenderer:
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
-        time: 0.6079111
-        value: 0.47899112
-        inSlope: -0.4751539
-        outSlope: -0.4751539
+        time: 0.67383504
+        value: 0.71666664
+        inSlope: 0
+        outSlope: 0
         tangentMode: 0
         weightedMode: 0
-        inWeight: 0.34103778
+        inWeight: 0
         outWeight: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
