@@ -139,13 +139,8 @@ public class AuvAgent : Agent
             var episodeNo = episodeCounter - 1;
             var pathLength = episodeLenght[episodeCounter - 1];
 
-            if (minEpisodeOfConvergence.Value > pathLength)
-            {
-                minEpisodeOfConvergence = new KeyValuePair<int, float>(episodeNo, pathLength);
-            }
-
-            string debugMessage = $"\tEpisode {episodeNo}\tGoal Count: {goalCount,5}\tEpisode Distance: {pathLength}" +
-                $"\tMin-Episode of Convergence: {minEpisodeOfConvergence.Key}\tOptimal Path: {minEpisodeOfConvergence.Value}";
+            string debugMessage = $"\tEpisode {episodeNo}\tGoal Count: {goalCount,5}\tEpisode Distance: {pathLength,10}" +
+                $"\tMin-Episode of Convergence: {minEpisodeOfConvergence.Key}\tOptimal Path: {minEpisodeOfConvergence.Value}\tMaxStep: {MaxStep}";
             Debug.Log(debugMessage);
         }
     }
@@ -228,8 +223,7 @@ public class AuvAgent : Agent
         sensorList.ForEach(s => s.DrawLine());
 
         lineRenderer.time = episodePaths.SelectMany(e => e.Value).Count();
-        lineRenderer.AddPosition(transform.position);
-
+        lineRenderer.AddPosition(transform.position + Vector3.up * 3);
 
         lastSpeed = speed;
         lastAngle = angle;
@@ -240,6 +234,13 @@ public class AuvAgent : Agent
         if (other.gameObject.name == Target.name)
         {
             goalCount++;
+            var episodeNo = episodeCounter;
+            var pathLength = episodeLenght[episodeCounter];
+
+            if (minEpisodeOfConvergence.Value > pathLength)
+            {
+                minEpisodeOfConvergence = new KeyValuePair<int, float>(episodeNo, pathLength);
+            }
             SetReward(Rsucceed);
             EndEpisode();
         }
