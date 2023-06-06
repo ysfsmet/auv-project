@@ -589,8 +589,8 @@ TrailRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 475383447}
   m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_StaticShadowCaster: 0
   m_MotionVectors: 0
@@ -713,7 +713,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3601310849344803953, guid: 84fdf792828eff74c86d559e8c380c82, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 491.11697
+      value: 493
       objectReference: {fileID: 0}
     - target: {fileID: 3601310849344803953, guid: 84fdf792828eff74c86d559e8c380c82, type: 3}
       propertyPath: m_LocalPosition.y
@@ -721,7 +721,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3601310849344803953, guid: 84fdf792828eff74c86d559e8c380c82, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -22.213573
+      value: -43
       objectReference: {fileID: 0}
     - target: {fileID: 3601310849344803953, guid: 84fdf792828eff74c86d559e8c380c82, type: 3}
       propertyPath: m_LocalRotation.w

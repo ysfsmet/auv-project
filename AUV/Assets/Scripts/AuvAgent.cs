@@ -87,6 +87,7 @@ public class AuvAgent : Agent
     private int episodeCounter = -1;
     private Dictionary<int, List<Vector3>> episodePaths;
     private Dictionary<int, float> episodeLenght;
+    private KeyValuePair<int, float> minEpisodeOfConvergence;
     private List<Sensor> sensorList;
     private float lastSpeed;
     private float lastAngle;
@@ -108,6 +109,7 @@ public class AuvAgent : Agent
     // Start is called before the first frame update
     void Start()
     {
+        minEpisodeOfConvergence = new KeyValuePair<int, float>(0, float.MaxValue);
         episodePaths = new Dictionary<int, List<Vector3>>();
         episodeLenght = new Dictionary<int, float>();
         sensorList = new List<Sensor>()
@@ -134,7 +136,16 @@ public class AuvAgent : Agent
         episodeLenght.Add(episodeCounter, 0f);
         if (episodeCounter > 1)
         {
-            string debugMessage = $"\tEpisode {episodeCounter - 1}\tGoal Count: {goalCount,5}\tTotal Distance: {episodeLenght[episodeCounter - 1]}";
+            var episodeNo = episodeCounter - 1;
+            var pathLength = episodeLenght[episodeCounter - 1];
+
+            if (minEpisodeOfConvergence.Value > pathLength)
+            {
+                minEpisodeOfConvergence = new KeyValuePair<int, float>(episodeNo, pathLength);
+            }
+
+            string debugMessage = $"\tEpisode {episodeNo}\tGoal Count: {goalCount,5}\tEpisode Distance: {pathLength}" +
+                $"\tMin-Episode of Convergence: {minEpisodeOfConvergence.Key}\tOptimal Path: {minEpisodeOfConvergence.Value}";
             Debug.Log(debugMessage);
         }
     }
@@ -216,10 +227,9 @@ public class AuvAgent : Agent
 
         sensorList.ForEach(s => s.DrawLine());
 
-        //lineRenderer.positionCount = episodePaths[episodeCounter].Count;
-        //lineRenderer.SetPositions(episodePaths[episodeCounter].ToArray());
         lineRenderer.time = episodePaths.SelectMany(e => e.Value).Count();
         lineRenderer.AddPosition(transform.position);
+
 
         lastSpeed = speed;
         lastAngle = angle;
