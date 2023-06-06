@@ -83,13 +83,14 @@ public class Sensor
 
 public class AuvAgent : Agent
 {
-    private int episodeCounter = 0;
+    private int goalCount;
+    private int episodeCounter = -1;
     private Dictionary<int, List<Vector3>> episodePaths;
     private Dictionary<int, float> episodeLenght;
     private List<Sensor> sensorList;
     private float lastSpeed;
     private float lastAngle;
-    private LineRenderer lineRenderer;
+    private TrailRenderer lineRenderer;
     private Vector3 startPosition;
 
     public Transform Target;
@@ -127,30 +128,19 @@ public class AuvAgent : Agent
         transform.position = startPosition;
         //transform.position = new Vector3(421, 0, -34);
         transform.rotation = Quaternion.Euler(0, -90, 0);
-        lineRenderer = GetComponentInChildren<LineRenderer>();
+        lineRenderer = GetComponentInChildren<TrailRenderer>();
         episodeCounter++;
         episodePaths.Add(episodeCounter, new List<Vector3>());
         episodeLenght.Add(episodeCounter, 0f);
-        if (episodeCounter > 2)
+        if (episodeCounter > 1)
         {
-            string debugMessage = $"\tEpisode {episodeCounter - 1}\tTotal Distance: {episodeLenght[episodeCounter - 1]}";
+            string debugMessage = $"\tEpisode {episodeCounter - 1}\tGoal Count: {goalCount,5}\tTotal Distance: {episodeLenght[episodeCounter - 1]}";
             Debug.Log(debugMessage);
         }
     }
 
     public override void CollectObservations(VectorSensor sensor)
     {
-        //List<float> distances = new List<float>();
-        //foreach (var s in sensorList)
-        //{
-        //    float calculatedDistance = s.CalcDistance();
-        //    if (s.hitName == "Target")
-        //        calculatedDistance = maxSensordistance;
-        //    distances.Add(calculatedDistance);
-        //}
-
-        //sensor.AddObservation(distances);
-
         sensor.AddObservation(sensorList.Select(s => s.CalcDistance()).ToArray());
     }
 
@@ -224,14 +214,12 @@ public class AuvAgent : Agent
         SetReward(reward);
         #endregion
 
-        //string debugMessage = $"Rewards:\t{r1}\t{r2}\t{r3}\t{reward}\t{minSensorDist.hitName}\n\r" +
-        //    $"\tEpisode {episodeCounter}\tTotal Distance: {episodeLenght[episodeCounter]}";
-
-        //Debug.Log(debugMessage);
         sensorList.ForEach(s => s.DrawLine());
 
         //lineRenderer.positionCount = episodePaths[episodeCounter].Count;
         //lineRenderer.SetPositions(episodePaths[episodeCounter].ToArray());
+        lineRenderer.time = episodePaths.SelectMany(e => e.Value).Count();
+        lineRenderer.AddPosition(transform.position);
 
         lastSpeed = speed;
         lastAngle = angle;
@@ -241,6 +229,7 @@ public class AuvAgent : Agent
     {
         if (other.gameObject.name == Target.name)
         {
+            goalCount++;
             SetReward(Rsucceed);
             EndEpisode();
         }
