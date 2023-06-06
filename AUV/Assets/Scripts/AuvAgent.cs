@@ -1,13 +1,10 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Mathematics;
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Sensors;
-using Unity.VisualScripting;
 using UnityEngine;
-using static UnityEngine.UI.GridLayoutGroup;
 
 public class Sensor
 {
@@ -129,11 +126,16 @@ public class AuvAgent : Agent
     {
         transform.position = startPosition;
         //transform.position = new Vector3(421, 0, -34);
-        transform.rotation = Quaternion.Euler(0, 0, 0);
+        transform.rotation = Quaternion.Euler(0, -90, 0);
         lineRenderer = GetComponentInChildren<LineRenderer>();
         episodeCounter++;
         episodePaths.Add(episodeCounter, new List<Vector3>());
         episodeLenght.Add(episodeCounter, 0f);
+        if (episodeCounter > 2)
+        {
+            string debugMessage = $"\tEpisode {episodeCounter - 1}\tTotal Distance: {episodeLenght[episodeCounter - 1]}";
+            Debug.Log(debugMessage);
+        }
     }
 
     public override void CollectObservations(VectorSensor sensor)
@@ -222,14 +224,14 @@ public class AuvAgent : Agent
         SetReward(reward);
         #endregion
 
-        string debugMessage = $"Rewards:\t{r1}\t{r2}\t{r3}\t{reward}\t{minSensorDist.hitName}\n\r" +
-            $"\tEpisode {episodeCounter}\tTotal Distance: {episodeLenght[episodeCounter]}";
+        //string debugMessage = $"Rewards:\t{r1}\t{r2}\t{r3}\t{reward}\t{minSensorDist.hitName}\n\r" +
+        //    $"\tEpisode {episodeCounter}\tTotal Distance: {episodeLenght[episodeCounter]}";
 
-        Debug.Log(debugMessage);
+        //Debug.Log(debugMessage);
         sensorList.ForEach(s => s.DrawLine());
 
-        lineRenderer.positionCount = episodePaths[episodeCounter].Count;
-        lineRenderer.SetPositions(episodePaths[episodeCounter].ToArray());
+        //lineRenderer.positionCount = episodePaths[episodeCounter].Count;
+        //lineRenderer.SetPositions(episodePaths[episodeCounter].ToArray());
 
         lastSpeed = speed;
         lastAngle = angle;

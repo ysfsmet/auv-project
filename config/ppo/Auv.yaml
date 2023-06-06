@@ -25,10 +25,10 @@ behaviors:
     summary_freq: 12000
     threaded: True
 # env_settings:
-#   env_path: "C:\\Users\\FerhadKALELI\\auv-project\\build"
+#   env_path: "build\\"
 #   env_args: null
 #   base_port: 5005
-#   num_envs: 8
+#   num_envs: 4
 #   num_areas: 1
 #   seed: -1
 #   max_lifetime_restarts: 10
