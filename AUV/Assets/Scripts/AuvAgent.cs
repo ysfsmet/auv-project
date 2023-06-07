@@ -123,6 +123,7 @@ public class AuvAgent : Agent
             new Sensor(this.transform, maxSensordistance, "rightInverse"),
         };
         startPosition = transform.position;
+        lineRenderer = GetComponentInChildren<TrailRenderer>();
     }
 
     public override void OnEpisodeBegin()
@@ -130,7 +131,7 @@ public class AuvAgent : Agent
         transform.position = startPosition;
         //transform.position = new Vector3(421, 0, -34);
         transform.rotation = Quaternion.Euler(0, -90, 0);
-        lineRenderer = GetComponentInChildren<TrailRenderer>();
+        lineRenderer.Clear();
         episodeCounter++;
         episodePaths.Add(episodeCounter, new List<Vector3>());
         episodeLenght.Add(episodeCounter, 0f);
@@ -222,7 +223,8 @@ public class AuvAgent : Agent
 
         sensorList.ForEach(s => s.DrawLine());
 
-        lineRenderer.time = episodePaths.SelectMany(e => e.Value).Count();
+        //lineRenderer.time = episodePaths.SelectMany(e => e.Value).Count();
+        lineRenderer.time = episodePaths[episodeCounter].Count;
         lineRenderer.AddPosition(transform.position + Vector3.up * 3);
 
         lastSpeed = speed;
