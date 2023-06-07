@@ -1,6 +1,9 @@
 # AUV Project
+You can reach project presentation from docs.
+You can reach run simulation from "AUV Static Environment Simulation" in releases.
+To create Unity Environment to train and simulation the Agent, please follow the instructions below.
 
-## Prereqiuests
+## Prerequests
 
 1. Install [Python 3.9.x]
 1. Install [Unity Editor]
