@@ -1,7 +1,7 @@
 # AUV Project
-You can reach project presentation from docs.
-You can reach run simulation from "AUV Static Environment Simulation" in releases.
-To create Unity Environment to train and simulation the Agent, please follow the instructions below.
+* Project presentation is ready in docs.
+* "AUV Static Environment Simulation" can be run directly in releases.
+* To create Unity Environment to train and simulation the Agent, please follow the instructions below.
 
 ## Prerequests
 
@@ -34,7 +34,9 @@ Note that on Windows, you may also need Microsoft's [Visual C++ Redistributable]
 3. Ignore warnings and choose `Continue`
 4. Start with `Safety Mode`
 5. Open the `Package Manager` under `Window` Menu
-   ![package manager][package-manager]
+
+![package manager][package-manager]
+ 
 6. Click the `+` button and select `Add package from disk..` option
 7. Locate to `com.unity.ml-agents` under root. Select `package.json`
 8. Apply same steps for `com.unity.ml-agents-extensions`
@@ -42,10 +44,8 @@ Note that on Windows, you may also need Microsoft's [Visual C++ Redistributable]
 ### Setup Scene
 
 1. Double click to SampleScene object under the Scenes folder.
-   ![open scene][open-scene]
-2. Click on the AUV object under TrainingArea
-3. Set `Target` of the Auv Agent (Script) component in the Inspector Window (Choose defined Target object)
-4. Set Model 
+
+   ![open scene][open-scene] 
 
 
 [open-scene]: resources/open-scene.png
