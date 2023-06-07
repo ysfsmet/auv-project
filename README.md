@@ -31,14 +31,19 @@ Note that on Windows, you may also need Microsoft's [Visual C++ Redistributable]
 3. Ignore warnings and choose `Continue`
 4. Start with `Safety Mode`
 5. Open the `Package Manager` under `Window` Menu
+   ![package manager][package-manager]
 6. Click the `+` button and select `Add package from disk..` option
 7. Locate to `com.unity.ml-agents` under root. Select `package.json`
 8. Apply same steps for `com.unity.ml-agents-extensions`
 
-### Open Scene
+### Setup Scene
 
 1. Double click to SampleScene object under the Scenes folder.
+   ![open scene][open-scene]
+2. Click on the AUV object under TrainingArea
+3. Set `Target` of the Auv Agent (Script) component in the Inspector Window (Choose defined Target object)
+4. Set Model 
 
-![open scene][open-scene]
 
-[open-scene]:resources/open-scene.png
+[open-scene]: resources/open-scene.png
+[package-manager]: resources/package-manager.png
